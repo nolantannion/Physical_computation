@@ -29,7 +29,6 @@ tmax = 100
 
 # Función que define la dinámica del sistema
 # vars tiene la estructura [x,vx,y,vy,z,vz]
-# Usaremos la aproximación isoterma al ser y<<10 km
 def sistema_completo(vars, rho, sign):
     
     # Creamos el array que almacena las derivadas de cada variable
@@ -44,7 +43,6 @@ def sistema_completo(vars, rho, sign):
     dvars[2] = vars[3]
     dvars[4] = vars[5]
     
-    # No incluimos el arrastre en x e y
     arrastre = -(1/2)*rho*A/m *modv 
     dvars[1] = arrastre*vars[1]*C[0]
     dvars[3] = -g + arrastre*vars[3]*C[1]
@@ -68,7 +66,6 @@ def sistema_x(vars, rho, sign):
     dvars[2] = vars[3]
     dvars[4] = vars[5]
     
-    # No incluimos el arrastre en x e y
     arrastre = -(1/2)*rho*A/m *modv 
     dvars[1] = arrastre*vars[1]*C[0]
     dvars[3] = -g + arrastre*vars[3]*C[1]
@@ -105,7 +102,7 @@ for i, sign in enumerate(spin):
     diff  = abs(np.sqrt(sol[-1,0]**2 + sol[-1,2]**2 + sol[-1,4]**2) - np.sqrt(solrk[-1,0]**2 + solrk[-1,2]**2 + solrk[-1,4]**2))
     print('Distancia entre aterrizajes: ',diff)
 
-
+    # Mostramos en pantalla la máxima distancia recorrida en cada eje
     print(f'Rozamiento en x {leyendas[i]}') 
     print(f'Desplazamiento maximo en |x|: {max(abs(sol[:,0]))}')
     print(f'Desplazamiento maximo en |y|: {max(abs(sol[:,2]))}')

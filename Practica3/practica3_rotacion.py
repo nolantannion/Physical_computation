@@ -31,7 +31,6 @@ tmax = 100
 
 # Función que define la dinámica del sistema
 # vars tiene la estructura [x,vx,y,vy,z,vz]
-# Usaremos la aproximación isoterma al ser y<<10 km
 def sistema_cross(vars, rho, sign):
     
     # Creamos el array que almacena las derivadas de cada variable
@@ -74,7 +73,6 @@ def sistema(vars, rho, sign):
     dvars[2] = vars[3]
     dvars[4] = vars[5]
     
-    # No incluimos el arrastre en x e y
     arrastre = -(1/2)*rho*A/m *modv 
     dvars[1] = arrastre*vars[1]*C[0]
     dvars[3] = -g + arrastre*vars[3]*C[1]

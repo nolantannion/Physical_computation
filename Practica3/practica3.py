@@ -1,12 +1,12 @@
 # Práctica 3
 '''
-Para la realizacion de la practica base se considera una variacion de la altura con un modelo isotermo
+Para la realizacion de la practica base se considera una densidad del aire constante
 y se desprecia el arrastre sufrido en las direcciones z e y.
 '''
 
 import numpy as np 
 import matplotlib.pyplot as plt
-from funciones_pr3 import rho_iso, euler, arrastrex, rho_const
+from funciones_pr3 import euler, arrastrex, rho_const
 
 
 # Constantes y arrays
@@ -53,7 +53,6 @@ def sistema(vars, rho, sign):
     dvars[2] = vars[3]
     dvars[4] = vars[5]
     
-    # No incluimos el arrastre en z e y
     arrastre = -(1/2)*rho*A/m *modv 
     dvars[1] = arrastre*vars[1]*C[0]
     dvars[3] = -g + arrastre*vars[3]*C[1]

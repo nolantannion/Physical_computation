@@ -41,7 +41,6 @@ def sistema(vars, rho, sign):
     dvars[2] = vars[3]
     dvars[4] = vars[5]
     
-    # No incluimos el arrastre en x e y
     arrastre = -(1/2)*rho*A/m *modv 
     dvars[1] = arrastre*vars[1]*C[0]
     dvars[3] = -g + arrastre*vars[3]*C[1]
