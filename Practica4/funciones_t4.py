@@ -93,17 +93,17 @@ def eulerr(sistema,t0,tf,h,estado0, roz):
 
 
 # Integracion de Euler - Cromer
-def euler_cromerr(sistema, t0, tf, h, estado0, roz):
+def euler_cromerr(sistema, t0, tf, estado0, params, h = 1e-3):
     """
-    INPUTS:
+    ## INPUTS:
     - sistema: funcion que define las derivadas de cada variable
     - h: longitud del paso para integrar
     - t0: tiempo inicial
     - tf: tiempo maximo de simulación
     - estado0: estado inicial del sistema
-    -roz: rozamiento del sistema
+    - params: array que contiene la amplitud y frecuencia de la fuerza impulsora y el rozamiento 
 
-    RETURN:
+    ## RETURN:
     - vars: np.array de dimensiones (N,2)
     - t: array de longitud N
     
@@ -115,7 +115,7 @@ def euler_cromerr(sistema, t0, tf, h, estado0, roz):
     t = [t0]
 
     for i in range(N - 1):
-        deriv = sistema(t[i],vars[i], roz)
+        deriv = sistema(t[i],vars[i], params)
 
         vars[i+1] = vars[i]
 
@@ -128,3 +128,4 @@ def euler_cromerr(sistema, t0, tf, h, estado0, roz):
         t.append(t[i] + h)
 
     return t, vars
+
