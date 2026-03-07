@@ -4,7 +4,7 @@ from funciones_t4 import euler_cromerr
 from matplotlib.animation import FuncAnimation
 
 '''
-Caso con resonancia en la fuerza impulsora y rozamiento bajo
+Simulación de la evolución del sistema para distintos rozamientos
 '''
 
 # Variables y constantes
@@ -41,9 +41,7 @@ def sistema(t,vars, params):
 t0 = 0
 tmax = 50
 dt = 1e-2
-# Se puede variar dt pero se incluye como un parametro fijo en la funcion
-# con valor 1e-3
-# dt = 1e-3
+
 
 # Condiciones iniciales del pendulo 1
 theta01 = 0.20
@@ -55,7 +53,7 @@ t1, sol1 = euler_cromerr(sistema=sistema, t0 = t0, tf = tmax, estado0= estado1, 
 theta1 = sol1[:,0]
 
 # Array con los 
-rozamientos = np.linspace(0.35,0.65,6)
+rozamientos = np.linspace(0.3,0.9,6)
 leyendas = []
 
 # Array que almacenara las soluciones
@@ -130,5 +128,5 @@ ani = FuncAnimation(
 )
 
 # Almacenamos la simulacion (mucho mas lento que visualizarla solo)
-#ani.save('Pendulos_sim.mp4', writer='ffmpeg')
+ani.save('Pendulossim.mp4', writer='ffmpeg')
 plt.show()

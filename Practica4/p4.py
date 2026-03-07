@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from funciones_t4 import euler_cromerr
 '''
-Script con la resolución de los apartados del problema propuesto
+Estudiamos el coeficiente de Lyapunov para distintos rozamientos
 '''
 
 # Variables y constantes
@@ -46,80 +46,62 @@ theta01 = 0.20
 omega01 = 0.0
 estado1 = [theta01, omega01]
 
+# Calculamos el pendulo de referencia para usar t1 
 t1, sol1 = euler_cromerr(sistema=sistema, t0 = t0, tf = tmax, estado0= estado1, params= parametros, h = dt)
-
-theta1 = sol1[:,0]
-theta1norm = (theta1 + np.pi) % (2*np.pi) - np.pi
-
 
 
 # Inicializar grafica y parametros
-fig, ax = plt.subplots(nrows=1, ncols=2, figsize= (10,6))
-ax[0].scatter(t1,theta1, s = 0.5, label = 'P 1')
+fig, ax = plt.subplots( figsize= (8,8))
+
+ax.grid()
+ax.set_xlabel('tiempo (s)')
+ax.set_ylabel(r'$log(\Delta \theta)$')
+ax.set_title(r'Evolución de $log(\Delta \theta )$')
 
 
-ax[0].grid()
-ax[0].legend()
-ax[0].set_xlabel('tiempo (s)')
-ax[0].set_ylabel(r'$\theta$ (rad)')
-ax[0].set_title('Evolución angular ')
-
-
-ax[1].grid()
-#ax[1].legend()
-ax[1].set_xlabel('tiempo (s)')
-ax[1].set_ylabel(r'$log(\Delta \theta)$')
-ax[1].set_title(r'Evolución de $log(\Delta \theta )$')
-
-
-rozamientos = np.linspace(0.4,0.7,4)
+rozamientos = np.linspace(0.3,0.9,4)
 
 # Panel de 4 figuras con la variacion angular
 figura, eje = plt.subplots( nrows= 2, ncols= 2, figsize = (7,7))
 figura.subplots_adjust(wspace=0.4, hspace=0.4)
 i,j = 0,0   # Indices para las graficas
-# Pendulo 2 y representacion
+
+# Calculo de los pendulos para cada rozamineto
 for rozm in rozamientos:
 
     theta02 = theta01 - 1e-2
     omega02 = 0.0
     estado2 = [theta02, omega02]
     parametros[2] = rozm
+    t1p, sol1p = euler_cromerr(sistema=sistema, t0 = t0, tf = tmax, estado0= estado1, params= parametros, h = dt)
     t2, sol2 = euler_cromerr(sistema=sistema, t0 = t0, tf = tmax, estado0= estado2, params= parametros, h = dt)
 
     theta2 = sol2[:,0]
+    theta1p = sol1p[:,0]
+
+    # Normalizamos entre +- pi
     theta2norm = (theta2 + np.pi) % (2*np.pi) - np.pi   #Normalizacion
+    theta1pnorm = (theta1p + np.pi) % (2*np.pi) - np.pi   #Normalizacion
 
 
-    # Calculamos el coeficiente de lyapunov, incluimos un termino de suavizado
-    # para evitar la divergencia del logaritmo
-    diff = np.abs(theta2norm-theta1norm) +1e-12
+
+    # Calculamos el logaritmo de la diferencia angular con 
+    # un suavizado por si acaso fueran exactamente iguales
+    diff = np.abs(theta2norm-theta1pnorm) + 1e-12
     diff = np.log(diff)
-
         
-    # Panel de figuras
-    ax[0].scatter(t1,theta2, s = 0.5, label = f'r: {rozm:.2f}')
-
-    ax[1].scatter(t1,diff, s = 0.4, label = f'r: {rozm:.2f}' )
-
-    ax[0].legend()
-    ax[1].legend()
-
+    # Evolucion del logaritmo
+    ax.scatter(t1,diff, s = 0.4, label = f'r: {rozm:.2f}' )
+    ax.legend()
 
 
     # Ajuste lineal para hallar el coeficiente
     # recortando un el transitorio y la saturacion
-    if rozm == 0.50:
-        N =int( 0.2* len(t1))
-        tly = np.float32(t1[N:2*N])
-        diffly = diff[N:2*N]
+    N =int(0.2* len(t1))
+    tly = np.float32(t1[N:2*N])
+    diffly = diff[N:2*N]
 
-    else:
-        N =int( 0.02* len(t1))
-        tly = np.float32(t1[N:10*N])
-        diffly = diff[N:10*N]
-
-    
+    # Mostramos el coeficiente calculado para cada rozamiento
     print(f'roz: {rozm:.3f}')
     p = np.polyfit(tly,diffly,1)
 
@@ -149,8 +131,8 @@ for rozm in rozamientos:
 figura.suptitle(r'$\log (\Delta \theta)$ frente al tiempo')
 
 # Almacenamos las figuras
-# fig.savefig('Ly.png', dpi = 500)
-# figura.savefig('Ly1.png', dpi = 500)
+fig.savefig('Coeficientes.png', dpi = 500)
+figura.savefig('Coeficientes1.png', dpi = 500)
 
 plt.show()
 

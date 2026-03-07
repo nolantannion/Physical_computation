@@ -40,9 +40,7 @@ def sistema(t,vars, params):
 # Parametros de integracion
 t0 = 0
 tmax = 100
-# Se puede variar dt pero se incluye como un parametro fijo en la funcion
-# con valor 1e-3
-# dt = 1e-3
+
 
 # Calculos para el pendulo 1
 theta01 = 0.20
@@ -59,13 +57,14 @@ theta1norm = (theta1 + np.pi) % (2*np.pi) - np.pi
 N =int( 0.2* len(t1))
 
 
-thetasol = [theta1norm]
+thetasolnorm = [theta1norm]
+thetasol = [theta1]
 omegasol = [sol1[:,1]]
 # Calculo de los otros pendulos y representacion
-rozamientos = np.linspace(0.48,0.52,3)
+rozamientos = np.linspace(0.3,0.9,3)
 for rozm in rozamientos:
 
-    theta02 = 0.3
+    theta02 = theta01 - 1e-2
     omega02 = 0.0
     estado2 = [theta02, omega02]
     parametros[2] = rozm
@@ -80,13 +79,14 @@ for rozm in rozamientos:
 
     # Añadimos la solucion a nuestro array de soluciones
     omegasol.append(omega2)
-    thetasol.append(theta2norm)
+    thetasolnorm.append(theta2norm)
+    thetasol.append(theta2)
 
 
 # Creamos un array que contenga las leyendas
 leyendas = ['Pendulo 1']
 for roz in rozamientos:
-    leyendas.append(f'r: {roz}')
+    leyendas.append(f'r: {roz:.2f}')
 
 # Representamos el espacio de fases para cada caso
 fig, ax = plt.subplots(nrows=2, ncols=2, figsize = (10,6))
@@ -95,21 +95,27 @@ fig.subplots_adjust(wspace=0.4, hspace=0.4)
 j = 0
 k = 0
 for i in range(len(thetasol)):
-    theta = thetasol[i]
-    omega = omegasol[i]
 
     if j>1:
         j = 0
         k = 1
 
+    if k == 0:
+        theta = thetasol[i]
+    else:
+        theta = thetasolnorm[i]
+
+    omega = omegasol[i]
+
     eje.scatter(theta,omega, s = 0.4,  label = f'{leyendas[i]}')
+
 
     # Representamos el espacio de fases usando un gradiente de color para
     # indicar la evolucion temporal
     e_fases = ax[j,k].scatter(theta, omega, s=0.4, label = f'{leyendas[i]}', c = t1, cmap = 'viridis')
     ax[j,k].legend()
-    ax[j,k].set_xlabel(r"$\theta$")
-    ax[j,k].set_ylabel(r"$\dot{\theta}$")
+    ax[j,k].set_xlabel(r"$\theta$ (rad)")
+    ax[j,k].set_ylabel(r"$\dot{\theta}$ (rad/s)")
     fig.colorbar(e_fases, ax = ax[j,k], label = 't') # Barra que muestra el valor del gradiente
     j += 1
 
@@ -117,13 +123,13 @@ for i in range(len(thetasol)):
 fig.suptitle('Espacio de fases')
 eje.set_xlim(-0.5,0.5)
 eje.axis('tight')
-eje.set_xlabel(r"$\theta$")
-eje.set_ylabel(r"$\dot{\theta}$")
+eje.set_xlabel(r"$\theta$ (rad)")
+eje.set_ylabel(r"$\dot{\theta}$ (rad/s)")
 eje.set_title('Diagrama de Fases')
 eje.legend()
 
 # Almacenamos las figuras y las mostramos
-#figura.savefig('Esp_de_fases.png', dpi = 300)
-#fig.savefig('sube_de_fases.png', dpi = 500)
+# figura.savefig('Esp_de_fases.png', dpi = 500)
+# fig.savefig('sube_de_fases.png', dpi = 500)
 
 plt.show()
