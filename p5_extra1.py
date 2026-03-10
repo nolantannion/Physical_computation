@@ -5,7 +5,7 @@ from matplotlib.animation import FuncAnimation
 
 # Parámetros
 h, w = 50, 50
-N = 25
+N = 20
 
 # Crear cuerpos
 bodies = []
@@ -18,7 +18,7 @@ for _ in range(N):
     # y = np.random.choice([-1,1])*np.random.uniform(0.3*h, h)
 
     # Creamos una distribucion en forma de disco
-    rr = np.random.uniform(0.4*w, w)
+    rr = np.random.uniform(0.35*w, w)
     th = np.random.uniform(0, 2*np.pi)
 
     x = rr*np.cos(th)
@@ -27,7 +27,7 @@ for _ in range(N):
     r = np.array([x,y])
 
     # v = np.random.uniform(-10,10,2)
-    vv = np.random.uniform(-30,-50)
+    vv = np.random.uniform(-40,-50)
     vx = -vv*np.sin(th)
     vy = vv*np.cos(th)
 
@@ -70,7 +70,7 @@ for k in range(steps):
     for i,b in enumerate(bodies):
         b.step(dt)
         # Comprobamos la colision
-        if np.sqrt((b.r[0] - b_centro.r[0])**2 + (b.r[1] - b_centro.r[1])**2) < 1.5:
+        if np.sqrt((b.r[0] - b_centro.r[0])**2 + (b.r[1] - b_centro.r[1])**2) < 3.0:
             choque.append(i)
             
     # Almacenamos, si ha habido colision el punto no evoluciona mas
@@ -93,7 +93,7 @@ scatters = [
 ]
 
 # masa central
-center = ax.scatter(0,0,color='black',s=100)
+center = ax.scatter(0,0,color='black',s=150)
 
 # Fotograma inicial
 def init():
@@ -120,5 +120,5 @@ anim = FuncAnimation(
 plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Distribución alrededor de un cuerpo masivo ')
-anim.save('Orbita_central.mp4', writer='ffmpeg')
+# anim.save('Orbita_central.mp4', writer='ffmpeg')
 plt.show()
