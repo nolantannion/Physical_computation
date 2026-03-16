@@ -126,7 +126,7 @@ def init():
 
     return linea,cometa,jupiter
 
-
+# Funcion de actualizacion
 def update(i):
 
     # trayectoria del cometa
@@ -153,6 +153,6 @@ ani = FuncAnimation(
     blit=True
 )
 
-ani.save('Precesion_orbita.mp4', writer='ffmpeg')
+# ani.save('Precesion_orbita.mp4', writer='ffmpeg')
 
 plt.show()

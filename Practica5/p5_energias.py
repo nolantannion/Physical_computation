@@ -108,7 +108,7 @@ figura1.suptitle('Comparación de magnitudes según el integrador')
 
 
 # Opcionalmente descomentar para guardar
-figura1.savefig('Energia_momento1.png', dpi = 500)
-fig.savefig('Energias1.png', dpi = 500)
+# figura1.savefig('Energia_momento1.png', dpi = 500)
+# fig.savefig('Energias1.png', dpi = 500)
 
 plt.show()

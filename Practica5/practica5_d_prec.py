@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from funciones_t5 import euler_cromer, loc_max, loc_min
+from funciones_t5 import euler_cromer, loc_max, loc_min, verlet
 from matplotlib.animation import FuncAnimation
 
 ''' 
@@ -93,11 +93,8 @@ ypr = varspr[:,2]
 # Sin precesion
 r = np.sqrt(x**2 + y**2)
 iM, _ = loc_max(r)
-# im, _ = loc_min(r)
 
-ttM = t[iM]/Periodo
-# ttm = t[im]/Periodo
-
+ttM = t[iM]
 theta = np.arctan(y[iM]/x[iM])
 
 
@@ -105,10 +102,8 @@ theta = np.arctan(y[iM]/x[iM])
 # Con precesion
 rpr = np.sqrt(xpr**2 + ypr**2)
 iMpr, _ = loc_max(rpr)
-# impr, _ = loc_min(rpr)
 
-ttpM = tpr[iMpr]/Periodo
-# ttpm = tpr[impr]/Periodo
+ttpM = tpr[iMpr]
 thetapr = np.arctan(ypr[iMpr]/xpr[iMpr])
 
 
@@ -121,15 +116,16 @@ print(f'Velocidad de precesion:')
 print(f'Sin Jupiter: {p[0]:.3e} (rad/a)')
 print(f'Con Jupiter: {ppr[0]:.3e} (rad/a)')
 
+
 # Representamos la evolucion temporal del angulo y distancia 
 fig, ax = plt.subplots(nrows= 1, ncols=2, figsize = (8,6))
 ax[0].scatter(ttpM, thetapr, label = 'Precesión')
 ax[0].scatter(ttM,theta, label = 'Sin precesión')
 
-ax[1].scatter(ttM, r[iM], label = 'Sin precesión')
-ax[1].scatter(ttpM, rpr[iMpr], label = 'Con precesión')
+ax[1].scatter(ttM/Periodo, r[iM], label = 'Sin precesión')
+ax[1].scatter(ttpM/Periodo, rpr[iMpr], label = 'Con precesión')
 
-ax[0].set_xlabel('t/T')
+ax[0].set_xlabel('t (años)')
 ax[0].set_ylabel(r'$\theta$ (rad)')
 ax[1].set_xlabel('t/T')
 ax[1].set_ylabel(r'r (UA)')
@@ -145,8 +141,35 @@ ax[1].grid()
 
 
 
+# Calculamos y representamos la energía y momento angular
+vxpr = varspr[:,1]
+vypr = varspr[:,3]
+
+rpr = np.sqrt(xpr**2 + ypr**2)
+vpr = np.sqrt(vxpr**2 + vypr**2)
+
+Ec = 0.5*vpr**2
+Ep = -Ms/r
+Et = Ec + Ep
+
+L = x*vypr - y*vxpr
+figura2, eje2 = plt.subplots(nrows= 1, ncols=2, figsize = (8,6))
+figura2.subplots_adjust(hspace= 0.5, wspace= 0.5)
+
+eje2[0].plot(t, Ec, lw=0.8, label=f'Ec')
+eje2[0].plot(t, Ep, lw=0.8, label=f'Ep')
+eje2[1].plot(t, L, lw=0.8, label='')
+eje2[0].set_xlabel('tiempo (años)')
+eje2[1].set_xlabel('tiempo (años)')
+    
+eje2[0].set_ylabel(r'Energía por ud de masa ($Ua^2/años^2$)')
+eje2[1].set_ylabel(r'Momento angular por ud de masa (años)')
+
+eje2[0].set_title('Energía)')
+eje2[1].set_title('Momento angular')
 
 
+# Representamos las trayectorias ante las distintas influencias
 figura, eje = plt.subplots(nrows=1,ncols=2,figsize  = (8,6))
 
 lx = 0.2*np.abs(np.max(x) - np.min(x))
@@ -162,7 +185,6 @@ eje[0].grid()
 eje[0].legend()
 
 eje[1].set_xlim(np.min(xpr)-xl , np.max(xpr)+xl)
-#eje[1].set_ylim(-lx , +lx)
 eje[1].set_ylim(np.min(ypr)-yl , np.max(ypr)+yl)
 eje[1].axis('equal')
 eje[1].grid()
@@ -180,6 +202,13 @@ eje[1].scatter(xpr[iMpr], ypr[iMpr], c = 'r')
 eje[0].set_title('Fuerza Central')
 eje[1].set_title('Fuerza No Central')
 
+eje[0].set_xlabel('x (UA)')
+eje[0].set_ylabel('y (UA)')
+eje[1].set_xlabel('x (UA)')
+eje[1].set_ylabel('y (UA)')
+
+
+
 eje[0].legend(bbox_to_anchor = (1.05,1))
 eje[1].legend(bbox_to_anchor = (1.05,1))
 
@@ -187,5 +216,5 @@ eje[1].legend(bbox_to_anchor = (1.05,1))
 # Descomentar para almacenar las imagenes con el titulo indicado
 # fig.savefig('th_r.png', dpi = 500)
 # figura.savefig('Prec_comp.png', dpi = 500)
-
+# figura2.savefig('E_jup.png', dpi = 500)
 plt.show()

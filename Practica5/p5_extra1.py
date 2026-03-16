@@ -5,7 +5,7 @@ from matplotlib.animation import FuncAnimation
 
 # Parámetros
 h, w = 50, 50
-N = 20
+N = 50
 
 # Crear cuerpos
 bodies = []
@@ -27,7 +27,7 @@ for _ in range(N):
     r = np.array([x,y])
 
     # v = np.random.uniform(-10,10,2)
-    vv = np.random.uniform(-40,-50)
+    vv = np.random.uniform(-25,-40)
     vx = -vv*np.sin(th)
     vy = vv*np.cos(th)
 
@@ -72,6 +72,7 @@ for k in range(steps):
         # Comprobamos la colision
         if np.sqrt((b.r[0] - b_centro.r[0])**2 + (b.r[1] - b_centro.r[1])**2) < 3.0:
             choque.append(i)
+            b_centro.m += b.m   # Añadimos la masa al cuerpo central
             
     # Almacenamos, si ha habido colision el punto no evoluciona mas
     for i,b in enumerate(bodies):
@@ -104,6 +105,8 @@ def update(frame):
 
     for i in range(N):
         scatters[i].set_offsets(traj[frame,i])
+        center = ax.scatter(0,0,color='black',s=150 + b_centro.m / 1e4)
+        
 
     return scatters + [center]
 
@@ -111,14 +114,15 @@ def update(frame):
 anim = FuncAnimation(
     fig,
     update,
-    frames=steps,
+    frames=range(0,steps,30),
     init_func=init,
-    interval=30,
+    interval=20,
     blit=True
 )
 
 plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Distribución alrededor de un cuerpo masivo ')
-# anim.save('Orbita_central.mp4', writer='ffmpeg')
+# Guarda la animacion
+# anim.save('Formacion.mp4', writer='ffmpeg')
 plt.show()

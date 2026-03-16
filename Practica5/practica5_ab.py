@@ -44,7 +44,7 @@ def sistema(t,estado):
     return np.array([vx,ax,vy,ay])
 
 
-# condición inicial
+# condiciones iniciales
 estado0 = np.array([r0,0,0,vy0])
 estado0_pl = np.array([29.7, 0, 0, vy_pl])
 
@@ -78,9 +78,11 @@ print('Cometa Halley: ')
 print("Afelio =",np.max(r),"UA")
 print('|V| max =', np.max(v),"UA/año \n")
 
+
 print('Pluton: ')
 print("Afelio =",np.max(rp),"UA")
 print('|V| max =', np.max(vp),"UA/año \n")
+
 
 
 
@@ -100,29 +102,6 @@ eje.set_xlabel('x (UA)')
 eje.set_ylabel('y (UA)')
 
 
-
-
-
-# Calculo y representacion de energias y momento angular
-Ech = 1/2*v**2
-Eph = -Ms/r
-
-Eth = Ech + Eph # Por unidad de masa
-
-L = x*vy - y*vx   # Momento angular en el plano por unidad de masa
-
-VarE = Eth[0] - Eth[-1]
-print('La variacion de energia en el sistema tras una orbita: ', VarE )
-
-figura1, eje1 = plt.subplots(nrows=1,ncols=3, figsize = (10,6))
-eje1[0].plot(t,Ech, lw = 0.8, label = 'Energía cinética')
-eje1[0].plot(t,Eph, lw = 0.8, label = 'Energía potencial')
-eje1[1].plot(t,Eth, lw = 0.8, label = 'Energía Total')
-eje1[2].plot(t,L, lw = 0.8, label = 'Momento angular')
-
-eje1[0].legend()
-eje1[1].legend()
-eje1[2].legend()
 
 
 # Animacion de la orbita
@@ -158,6 +137,5 @@ ani = FuncAnimation(fig,update,frames=range(0, len(x), 300),interval=10)
 
 # Opcionalmente almacenamos las figuras y animacion
 # figura.savefig('Orbitas.png', dpi = 500)
-# figura1.savefig('E y M.png', dpi = 500)
 # ani.save('Orbita_halley.mp4', writer= 'ffmpeg')
 plt.show()
