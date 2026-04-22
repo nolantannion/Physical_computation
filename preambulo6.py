@@ -34,10 +34,10 @@ for i in range(1,N):
 # Calculamos la suma cuadratica sobre en la dimension que recorre los pasos
 x2 = np.sum(xs**2,0)
 y2 = np.sum(ys**2,0)
-rr = x2+y2
+rr = (x2+y2)/nw
 
-x21 = np.sqrt(x2)
-y21 = np.sqrt(y2)
+x21 = np.sqrt(x2)/nw
+y21 = np.sqrt(y2)/nw
 
 n = np.arange(0,N)
 
@@ -49,30 +49,6 @@ eje.plot(n, y2, label = r'$\sigma _{y2}$')
 eje.legend()
 eje.set_xlabel('N pasos')
 eje.set_ylabel('Desviación')
-
-# fig, ax = plt.subplots(figsize=(6,6))
-
-# for i in range(nw):
-
-#     t = np.arange(N)
-
-#     sc = ax.scatter(
-#         xs[i,:],
-#         ys[i,:],
-#         c=t,
-#         cmap='viridis'
-#     )
-#     ax.plot( xs[i,:], ys[i,:])
-
-# ax.grid()
-
-# fig.colorbar(sc, ax=ax, label="Paso")
-
-# plt.show()
-
-
-
-
 
 
 fig, ax = plt.subplots(figsize=(6,6))
@@ -91,14 +67,8 @@ for i in range(nw):
     ax.scatter(xs[i,0],ys[i,0])#, label =  'p0')
     ax.scatter(xs[i,-1],ys[i,-1])#, label = 'pf')
 
-#ax.autoscale(segments.all)
+ax.autoscale(segments.all)
 ax.grid()
 ax.axis('tight')
 ax.legend()
-
-cmap = plt.cm.viridis
-sm = plt.cm.ScalarMappable(cmap=cmap)
-sm.set_array(np.arange(N-1))
-fig.colorbar(sm, ax=ax, label="Paso")
-
 plt.show()
