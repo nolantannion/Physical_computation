@@ -6,6 +6,9 @@
 ### * Caos in dynamics
 ### * n body problem
 ### * Stochastic Methods
+### * Monte Carlo Methods
+### * Elliptic EDPs and boundary condition problems
+### * Parabolic EDPs and IVP
 
 
 This repository contains the numerical resolution of physical problems using python with libraries such as numpy, python and matplotlib.
