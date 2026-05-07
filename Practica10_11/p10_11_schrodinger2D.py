@@ -52,7 +52,7 @@ X, Y = np.meshgrid(x, y, indexing='ij')
 # FUNCION DE ONDA INICIAL
 # ============================================================
 
-sigma = 1e-9
+sigma = 1.1e-9
 k0 = 8e10
 
 # Paquete gaussiano con momento inicial en x
@@ -78,8 +78,8 @@ x_bar = 0
 grosor = 2e-10
 
 # Rendijas
-separacion = 1e-9
-anchura = 1e-10
+separacion = 5e-10
+anchura = 1.5e-10
 
 # Barrera
 barrera = np.abs(X - x_bar) < grosor
