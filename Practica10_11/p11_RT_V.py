@@ -28,6 +28,9 @@ tiempo = np.arange(pasos) * dt
 hbar = 1.0
 m = 1.0
 
+# Malla espacial
+x = np.linspace(0, L, N)
+
 # =========================================================
 # Paquete gaussiano
 # =========================================================
@@ -40,17 +43,18 @@ k0 = 700
 # Barrera de potencial
 # =========================================================
 
+
 xc = 0.6 * L
 w = 0.05
 
 VV = [10*k0, 100*k0, 250*k0, k0**2]
 
-# Malla espacial
-x = np.linspace(0, L, N)
+zona_barrera = (x >= (xc - w/2)) & (x <= (xc + w/2))
 
 # Regiones
-transm = x > (xc + w)
-refl = x < xc
+# Regiones del espacio
+z_t = x > (xc - w/2)
+z_r = x < (xc + w/2)
 
 # =========================================================
 # Funcion de onda inicial normalizada
@@ -73,14 +77,17 @@ fig, ax = plt.subplots(1, 2, figsize=(14, 5))
 # =========================================================
 # Bucle sobre potenciales
 # =========================================================
+# Regiones de transmision y reflexion
+transm = x > (xc + w/2)
+refl = x < (xc - w/2)
+
+
 
 for V0 in VV:
-
-
     # Potencial
     V = np.zeros(N)
 
-    zona_barrera = (x >= xc) & (x <= xc + w)
+
     V[zona_barrera] = V0
 
     V_in = V[1:-1]
@@ -103,7 +110,7 @@ for V0 in VV:
 
 
 
-    # Evolución temporal
+    # Evolucion temporal
     psi_sol = np.zeros((N, pasos), dtype=complex)
     psi_sol[:, 0] = psi0.copy()
 

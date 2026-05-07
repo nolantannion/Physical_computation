@@ -21,7 +21,7 @@ dx = 5e-4
 N = int(L / dx)
 
 dt = 5e-7
-pasos = 2000
+pasos = 2500
 
 tiempo = np.arange(pasos) * dt
 
@@ -55,13 +55,10 @@ V0 = 350*k0
 x = np.linspace(0, L, N)
 
 # =========================================================
-# Función de onda inicial
+# Funcion de onda inicial
 # =========================================================
 
-psi0 = (
-    np.exp(-(x - x0)**2 / (2 * sigma**2))
-    * np.exp(1j * k0 * x)
-)
+psi0 = (np.exp(-(x - x0)**2 / (2 * sigma**2))* np.exp(1j * k0 * x))
 
 norm = np.sqrt(trapezoid(np.abs(psi0)**2, x))
 psi0 /= norm
@@ -85,6 +82,7 @@ fig, ax = plt.subplots(1, 2, figsize=(14, 5))
 # Bucle sobre anchuras
 # =========================================================
 
+
 for w in WW:
 
     # ---------------------------------------------
@@ -93,7 +91,8 @@ for w in WW:
 
     V = np.zeros(N)
 
-    zona_barrera = (x >= xc) & (x <= xc + w)
+    zona_barrera = (x >= (xc - w/2)) & (x <= (xc + w/2))
+
 
     V[zona_barrera] = V0
 

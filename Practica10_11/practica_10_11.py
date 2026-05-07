@@ -2,6 +2,12 @@
 Alba Ruesga Alonso, Sofia Martín Alañón, Nolan Tannion Rodríguez
 '''
 
+
+'''
+Resolucion de la seccion base de la practica.
+Utilizando un unico potencial y una unica anchura de la barrera 
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -41,8 +47,8 @@ V0 = 200*k0   # Altura del potencial (ligeramente inferior al recomendado con mo
 x = np.linspace(0, L, N)
 
 # Regiones del espacio
-z_t = x > (xc)
-z_r = x < (xc + w)
+z_t = x > (xc - w/2)
+z_r = x < (xc + w/2)
 
 # Funcion de onda incial normalizada
 psi = np.exp(-(x - x0)**2 / (2 * sigma**2))* np.exp(1j * k0 * x)
@@ -100,10 +106,11 @@ R = np.zeros(pasos)
 P_total = np.zeros(pasos)
 
 # Regiones de transmision y reflexion
-transm = x > (xc + w)
-refl = x < xc
+transm = x > (xc + w/2)
+refl = x < (xc - w/2)
 
-# Cálculo temporal
+
+# Calculo temporal
 prob = np.zeros_like(psi_sol, dtype= float)
 for n in range(pasos):
 
@@ -145,9 +152,8 @@ plt.show()
 
 # Animacion de la funcion de onda
 fig, ax = plt.subplots()
-
-linea, = ax.plot(x, prob[:, 0])
-ax.vlines([xc,xc+w], 0, 100, color = 'r')
+linea, = ax.plot(x, prob[:, 0]) # linea con la distribucion inicial
+ax.vlines([xc - w/2,xc + w/2], 0, 100, color = 'r') # marcamos el potencial
 
 ax.set_xlim(0, L)
 ax.set_ylim(0, np.max(prob)*1.1)
@@ -162,5 +168,26 @@ def update(frame):
     return linea,
 
 anim = FuncAnimation( fig, update, frames=np.arange(0, pasos, 10), blit=True, interval = 10)
+plt.show()
 
+
+
+
+# Sacamos una grafica con 3 puntos, inicial al chocar con la barrera y tras pasar
+momento = 950
+momento2 = 1600
+figura, eje = plt.subplots()
+
+eje.plot(x, prob[:, 0], label = 'Distribución inicial')
+eje.plot(x, prob[:, momento], label = f't = {momento *dt:.1e}s')
+eje.plot(x, prob[:, momento2], label = f't = {momento2*dt:.1e}')
+eje.vlines([xc - w/2,xc + w/2], 0, 100, color = 'r')
+eje.set_xlim(0, L)
+eje.set_ylim(0, np.max(prob)*1.1)
+eje.set_xlabel("x")
+eje.set_ylabel(r"$|\psi(x,t)|^2$")
+eje.set_title(f"Distribuciones a distintos tiempos")
+eje.plot(x, prob[:,momento])
+eje.legend(loc = 'upper left')
+figura.savefig('Barrera_0.png', dpi = 300)
 plt.show()
