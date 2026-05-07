@@ -5,15 +5,13 @@ Alba Ruesga Alonso, Sofia Martín Alañón, Nolan Tannion Rodríguez
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-
+from scipy.integrate import trapezoid
 from funciones_t11 import banded
 
 
-# ============================================================
-# PARÁMETROS FÍSICOS Y COMPUTACIONALES
-# ============================================================
+# Parametros y constantes
 
-# Caja unidimensional
+# Lado de la caja unidimensional
 L = 1.0
 
 # Discretizacion espacial
@@ -22,12 +20,10 @@ N = int(L/dx)
 
 # Discretizacion temporal
 dt = 5e-7
-h = dt
+h = dt 
+pasos = 6000    # pasos temporales
 
-# Número de iteraciones
-pasos = 4000
-
-# Constantes físicas 
+# Constantes fisicas 
 hbar = 1.0
 m = 1.0
 
@@ -39,35 +35,37 @@ k0 = 700    # Momento inicial
 # Barrera V
 xc = 0.6 * L    # Centro de la barrera
 w = 0.05    # Anchura
-V0 = 1e5    # Altura del potencial
+V0 = 200*k0   # Altura del potencial (ligeramente inferior al recomendado con motivo de visualizacion)
 
-# MALLA ESPACIAL
+# Malla espacial
 x = np.linspace(0, L, N)
 
-# FUNCIÓN DE ONDA INICIAL
+# Regiones del espacio
+z_t = x > (xc)
+z_r = x < (xc + w)
 
+# Funcion de onda incial normalizada
 psi = np.exp(-(x - x0)**2 / (2 * sigma**2))* np.exp(1j * k0 * x)
+norm = np.sqrt(trapezoid(np.abs(psi)**2, x))
+psi /= norm
 
 # Condiciones de contorno
 psi[0] = 0
 psi[-1] = 0
 
-# POTENCIAL RECTANGULAR
+# Potencial rectangular
 V = np.zeros(N)
 
-V[(x > xc) & (x < xc + w)] = V0
+V[z_t & z_r] = V0
 
 # Solo puntos interiores
 V_in = V[1:-1]
-
-# CRANK-NICOLSON
 m_in = N - 2
 
-# Coeficiente cinético
-s = 1j * hbar * h / (4 * m * dx**2)
 
-# Coeficiente potencial
-r = 1j * h * V_in / (2 * hbar)
+# Coeficientes, incorporando el potencial
+s = 1j * hbar * dt / (4 * m * dx**2)
+r = 1j * dt * V_in / (2 * hbar)
 
 # Diagonales
 a1 = 1 + 2*s + r
@@ -76,7 +74,7 @@ a2 = -s
 b1 = 1 - 2*s - r
 b2 = s
 
-# MATRIZ A
+# Matriz A
 A = np.zeros((3, m_in), dtype=complex)
 
 for i in range(m_in):
@@ -89,12 +87,12 @@ for i in range(m_in):
     if i < m_in - 1:
         A[0, i+1] = a2
 
-# PASO TEMPORAL
+# Paso de Crank-Nicolson 
 def paso_psi(psi):
 
     psi_in = psi[1:-1]
 
-    # Construcción del vector RHS
+    # Construccion del vector RHS
     v = b1 * psi_in.copy()
 
     v[1:] += b2 * psi_in[:-1]
@@ -103,55 +101,93 @@ def paso_psi(psi):
     # Resolver sistema lineal
     psi_new = banded(A.copy(), v, 1, 1)
 
-    # Reconstrucción con fronteras
+    # Reconstruccion con fronteras
     psi_next = np.zeros_like(psi, dtype=complex)
 
     psi_next[1:-1] = psi_new
 
     return psi_next
 
-# EVOLUCIÓN TEMPORAL
+# Evolucion temporal
 psi_sol = np.zeros((N, pasos), dtype=complex)
 psi_sol[:, 0] = psi
 
 for n in range(1, pasos):
-
     psi_sol[:, n] = paso_psi(psi_sol[:, n-1])
 
-# ============================================================
-# MÓDULO
-# ============================================================
+# Modulo de la funcion en cada posicion y tiempo
+modpsi = np.abs(psi_sol)
 
-modpsi = abs(psi_sol)
 
-# ============================================================
-# ANIMACIÓN
-# ============================================================
 
+# Calculamos R y T
+# Arrays para almacenar resultados
+T = np.zeros(pasos)
+R = np.zeros(pasos)
+P_total = np.zeros(pasos)
+
+# Regiones de transmision y reflexion
+transm = x > (xc + w)
+refl = x < xc
+
+# Cálculo temporal
+prob = np.zeros_like(psi_sol, dtype= float)
+for n in range(pasos):
+
+    # Densidad de probabilidad
+    prob[:,n] = np.abs(psi_sol[:, n])**2
+
+    # Transmitancia
+    T[n] = trapezoid( prob[transm,n], x[transm])
+
+    # Reflectancia
+    R[n] = trapezoid(prob[refl,n], x[refl])
+
+    # Probabilidad total
+    P_total[n] = trapezoid(prob[:,n], x)
+
+# Representacion de T y R
+tiempo = np.arange(pasos) * dt
+
+plt.figure(figsize=(8,5))
+
+plt.plot(tiempo, T, label='Transmitancia')
+plt.plot(tiempo, R, label='Reflectancia')
+plt.plot(tiempo, T + R, '--', label='T + R')
+plt.plot(tiempo, P_total, ':', label='Probabilidad total')
+
+plt.xlabel('Tiempo')
+plt.ylabel('Probabilidad')
+
+plt.title('T(t) y R(t)')
+
+plt.legend()
+plt.grid()
+
+plt.savefig('Evolucion de T y R')
+plt.show()
+
+
+
+
+# Animacion de la funcion de onda
 fig, ax = plt.subplots()
 
-linea, = ax.plot(x, modpsi[:, 0])
-ax.vlines([xc,xc+w], 0, 1, color = 'r')
+linea, = ax.plot(x, prob[:, 0])
+ax.vlines([xc,xc+w], 0, 100, color = 'r')
 
 ax.set_xlim(0, L)
-ax.set_ylim(0, np.max(modpsi)*1.1)
+ax.set_ylim(0, np.max(prob)*1.1)
 
 ax.set_xlabel("x")
-ax.set_ylabel(r"$|\psi(x,t)|$")
+ax.set_ylabel(r"$|\psi(x,t)|^2$")
 ax.set_title("Evolución temporal")
 
 def update(frame):
-
-    linea.set_ydata(modpsi[:, frame])
+    linea.set_ydata(prob[:, frame])
 
     return linea,
 
-anim = FuncAnimation(
-    fig,
-    update,
-    frames=np.arange(0, pasos, 10),
-    blit=True,
-    interval = 10
-)
+anim = FuncAnimation( fig, update, frames=np.arange(0, pasos, 10), blit=True, interval = 10)
 
 plt.show()

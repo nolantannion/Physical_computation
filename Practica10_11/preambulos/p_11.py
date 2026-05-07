@@ -3,9 +3,7 @@ from funciones_t11 import banded
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-# =========================
-# Parámetros físicos
-# =========================
+# Parametros físicos
 hbar = 1.0546e-34
 m = 9.109e-31
 
@@ -14,9 +12,7 @@ N = 1000
 a = L / N
 h = 1e-18
 
-# =========================
 # Condición inicial
-# =========================
 x = np.linspace(0, L, N)
 
 x0 = L/2
@@ -31,9 +27,8 @@ psi[0] = psi[-1] = 0
 # puntos interiores
 m_in = N - 2
 
-# =========================
+
 # Coeficientes CN
-# =========================
 s = 1j * hbar * h / (4 * m * a**2)
 
 a1 = 1 + 2*s
@@ -42,18 +37,14 @@ a2 = -s
 b1 = 1 - 2*s
 b2 = s
 
-# =========================
 # Matriz A (banded)
-# =========================
 A = np.zeros((3, m_in), dtype=complex)
 
 A[1, :] = a1
 A[0, 1:] = a2
 A[2, :-1] = a2
 
-# =========================
 # Paso temporal
-# =========================
 def paso_psi(psi):
     psi_in = psi[1:-1]
 
@@ -72,9 +63,7 @@ def paso_psi(psi):
 
     return psi_next
 
-# =========================
 # Evolución temporal
-# =========================
 pasos = 200
 
 psi_sol = np.zeros((N, pasos), dtype=complex)
@@ -83,9 +72,7 @@ psi_sol[:, 0] = psi
 for n in range(1, pasos):
     psi_sol[:, n] = paso_psi(psi_sol[:, n-1])
 
-# =========================
 # Figura
-# =========================
 fig, ax = plt.subplots()
 line, = ax.plot(x, np.real(psi_sol[:, 0]), lw=2)
 
@@ -95,19 +82,11 @@ ax.set_xlabel("x")
 ax.set_ylabel(r"Re($\psi$)")
 ax.set_title("Evolución temporal (Crank-Nicolson)")
 
-# =========================
-# Animación
-# =========================
+# Animacion
 def update(frame):
     line.set_ydata(np.real(psi_sol[:, frame]))
     return line,
 
-ani = FuncAnimation(
-    fig,
-    update,
-    frames=pasos,
-    interval=30,
-    blit=True
-)
+ani = FuncAnimation( fig, update, frames=pasos, interval=30, blit=True)
 
 plt.show()
