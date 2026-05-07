@@ -1,11 +1,12 @@
+'''
+Alba Ruesga Alonso, Sofia Martín Alañón, Nolan Tannion Rodríguez
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
-
 from matplotlib.animation import FuncAnimation
-
 from scipy.sparse import diags, kron, eye
 from scipy.sparse.linalg import factorized
-
 
 '''
 Resolución de la ecuación de Schrödinger 2D
