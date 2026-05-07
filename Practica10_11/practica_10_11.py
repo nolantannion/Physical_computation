@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.integrate import trapezoid
-from funciones_t11 import banded
+from funciones_t11 import paso_psi
 
 
 # Parametros y constantes
@@ -76,44 +76,17 @@ b2 = s
 
 # Matriz A
 A = np.zeros((3, m_in), dtype=complex)
+A[1, :] = a1
+A[0, 1:] = a2
+A[2, :-1] = a2
 
-for i in range(m_in):
-
-    A[1, i] = a1[i]
-
-    if i > 0:
-        A[2, i-1] = a2
-
-    if i < m_in - 1:
-        A[0, i+1] = a2
-
-# Paso de Crank-Nicolson 
-def paso_psi(psi):
-
-    psi_in = psi[1:-1]
-
-    # Construccion del vector RHS
-    v = b1 * psi_in.copy()
-
-    v[1:] += b2 * psi_in[:-1]
-    v[:-1] += b2 * psi_in[1:]
-
-    # Resolver sistema lineal
-    psi_new = banded(A.copy(), v, 1, 1)
-
-    # Reconstruccion con fronteras
-    psi_next = np.zeros_like(psi, dtype=complex)
-
-    psi_next[1:-1] = psi_new
-
-    return psi_next
 
 # Evolucion temporal
 psi_sol = np.zeros((N, pasos), dtype=complex)
 psi_sol[:, 0] = psi
 
 for n in range(1, pasos):
-    psi_sol[:, n] = paso_psi(psi_sol[:, n-1])
+    psi_sol[:, n] = paso_psi(psi_sol[:, n-1], b1, b2, A)
 
 # Modulo de la funcion en cada posicion y tiempo
 modpsi = np.abs(psi_sol)

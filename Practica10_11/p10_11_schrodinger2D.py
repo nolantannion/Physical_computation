@@ -166,7 +166,7 @@ def paso_CN(psi):
 # EVOLUCION TEMPORAL
 # ============================================================
 
-pasos = 2000
+pasos = 2000 
 
 psit = np.zeros((Nx, Ny, pasos), dtype=complex)
 psit[:,:,0] = psi
