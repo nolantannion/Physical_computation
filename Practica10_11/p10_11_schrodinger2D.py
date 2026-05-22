@@ -208,13 +208,13 @@ plt.show()
 
 # Seleccion de fotogramas para una grafica
 im = [0, 155]
-figura, eje = plt.subplots(nrows = 1, ncols = 2, figsize = (7,6))
+figura, eje = plt.subplots(nrows = 1, ncols = 2, figsize = (7,4.5))
 
 eje[0].imshow(np.abs(psit[:,:,im[0]]).T**2, extent=[x.min(), x.max(), y.min(), y.max()], origin='lower', aspect='equal')
 eje[1].imshow(np.abs(psit[:,:,im[1]]).T**2, extent=[x.min(), x.max(), y.min(), y.max()], origin='lower', aspect='equal')
 
 
-figura.suptitle('Evolución Doble Rendija')
+figura.suptitle('Evolución Doble Rendija', y = 0.92)
 for i, a in enumerate(eje):
     a.set_xlabel("x")
     a.set_ylabel("y")

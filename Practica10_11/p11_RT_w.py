@@ -12,7 +12,7 @@ Script para calcular la variacion de R y T en funcion del grosor de la barrera
 '''
 
 # =========================================================
-# Parámetros y constantes
+# Parametros y constantes
 # =========================================================
 
 L = 1.0
@@ -129,7 +129,7 @@ for w in WW:
     A[2, :-1] = a2
 
     # ---------------------------------------------
-    # Evolución temporal
+    # Evolucion temporal
     # ---------------------------------------------
 
     psi_sol = np.zeros((N, pasos), dtype=complex)
@@ -156,7 +156,7 @@ for w in WW:
         R[n] = trapezoid(prob[refl], x[refl])
 
     # ---------------------------------------------
-    # Gráficas
+    # Graficas
     # ---------------------------------------------
 
     ax[0].plot(tiempo, T, label=fr'$w = {w:.3f}$')
@@ -164,7 +164,7 @@ for w in WW:
     ax[1].plot(tiempo, R, label=fr'$w = {w:.3f}$')
 
 # =========================================================
-# Configuración
+# Configuracion
 # =========================================================
 
 ax[0].set_title('Transmitancia')
